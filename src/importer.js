@@ -22,7 +22,7 @@ module.exports = function(url, prev, done) {
             if (file) {
                 done(file);
             } else {
-                file = resolveFile(filePath, '.css')
+                file = resolveFile(filePath, '.css');
                 if (file) {
                   done(file);
                 } else {
