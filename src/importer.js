@@ -8,29 +8,34 @@ var fromFileURL = require('./common').fromFileURL;
 
 
 module.exports = function(url, prev, done) {
-    if (url.substr(0, 5) != 'jspm:')
+    if (url.substr(0, 5) != 'jspm:') {
         return done(); // bailout
+    }
 
     url = url.replace(/^jspm:/, '');
 
-    jspm.normalize(url).then(function(filePath) {
-        var file = resolveFile(filePath, '.scss');
+    var loader = new jspm.Loader();
+    var normalizedPath = loader.normalizeSync(url);
+    console.log(normalizedPath);
+    var file = resolveFile(normalizedPath, '.scss');
+    if (file) {
+        return done(file);
+    }
+    else {
+        file = resolveFile(normalizedPath, '.sass');
         if (file) {
-            done(file);
-        } else {
-            file = resolveFile(filePath, '.sass');
+            return done(file);
+        }
+        else {
+            file = resolveFile(normalizedPath, '.css');
             if (file) {
-                done(file);
-            } else {
-                file = resolveFile(filePath, '.css');
-                if (file) {
-                  done(file);
-                } else {
-                  done();
-                }
+                return done(file);
+            }
+            else {
+                return done();
             }
         }
-    });
+    }
 
     function resolveFile(filePath, extension) {
         var stat;
@@ -40,8 +45,18 @@ module.exports = function(url, prev, done) {
         var scssRegex = /\.scss$/;
         var sassRegex = /\.sass$/;
 
+        console.log("filepath without double extension?", filePath);
+
         origFilePath = path.resolve(fromFileURL(filePath).replace(/\.js$/, extension));
+        console.log("stripped js", origFilePath);
         filePath = origFilePath;
+
+        /**
+         * This is such a dirty hack, need to rewrite this from scratch!
+         */
+        if (filePath.endsWith(extension + extension)) {
+            filePath = filePath.substring(0, filePath.length - extension.length);
+        }
 
         try {
             stat = fs.statSync(filePath);
