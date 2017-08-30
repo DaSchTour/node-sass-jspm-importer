@@ -4,6 +4,7 @@
   "description": "jspm importer module for node-sass",
   "main": "src/index.js",
   "scripts": {
+    "build": "tsc",
     "test": "node_modules/.bin/mocha test"
   },
   "repository": {
@@ -17,13 +18,15 @@
   "author": "IDCWARE",
   "license": "MIT",
   "devDependencies": {
+    "@types/node-sass": "^3.10.32",
     "chai": "^3.2.0",
     "mocha": "^2.2.5",
     "mockery": "^1.4.0",
-    "q": "^1.4.1"
+    "q": "^1.4.1",
+    "typescript": "^2.4.2"
   },
   "dependencies": {
-    "jspm": "^0.16.0 || ^0.17.0-beta",
+    "jspm": "^0.17.0-beta",
     "node-sass": "^3.13.1 || ^4.5.0"
   }
 }
